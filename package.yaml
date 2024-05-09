@@ -1,9 +1,9 @@
 name:                seminar-haskell-qc
 version:             0.1.0.0
-github:              "githubuser/seminar-haskell-qc"
+github:              "s-kuhn/seminar-haskell-qc"
 license:             BSD-3-Clause
 author:              "Sascha Kuhn"
-maintainer:          "example@example.com"
+maintainer:          "kusa1019@h-ka.de"
 copyright:           "2024 Sascha Kuhn"
 
 extra-source-files:
@@ -17,7 +17,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/seminar-haskell-qc#readme>
+description:         Please see the README on GitHub at <https://github.com/s-kuhn/seminar-haskell-qc#readme>
 
 dependencies:
 - base >= 4.7 && < 5

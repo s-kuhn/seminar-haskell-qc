@@ -6,11 +6,11 @@ cabal-version: 2.2
 
 name:           seminar-haskell-qc
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/seminar-haskell-qc#readme>
-homepage:       https://github.com/githubuser/seminar-haskell-qc#readme
-bug-reports:    https://github.com/githubuser/seminar-haskell-qc/issues
+description:    Please see the README on GitHub at <https://github.com/s-kuhn/seminar-haskell-qc#readme>
+homepage:       https://github.com/s-kuhn/seminar-haskell-qc#readme
+bug-reports:    https://github.com/s-kuhn/seminar-haskell-qc/issues
 author:         Sascha Kuhn
-maintainer:     example@example.com
+maintainer:     kusa1019@h-ka.de
 copyright:      2024 Sascha Kuhn
 license:        BSD-3-Clause
 license-file:   LICENSE
@@ -21,10 +21,11 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/seminar-haskell-qc
+  location: https://github.com/s-kuhn/seminar-haskell-qc
 
 library
   exposed-modules:
+      MyListArbitrary
       StringArbitrary
   other-modules:
       Paths_seminar_haskell_qc
