@@ -9,21 +9,27 @@
 - Bei einem Fehler wird versucht das Problem einzugrenzen (shrinking).
 - Erste Implementierung von QuickCheck in Haskell und inzwischen in über 30 Sprachen übernommen.
 
-### Vorraussetzungen
-Quickcheck Bibliothek muss installiert sein:
+### Ausführen:
+Project bauen:
 ```bash
-cabal install --lib QuickCheck
+stack build
+```
+
+Programm ausführen:
+```bash
+stack exec <path to file or exe>
 ```
 
 Code Coverage (optional):
 ```
 stack test --coverage
 ```
-// TODO: stack anschauen
 
 ### Generators
-Werden verwendet um Werte zu erzeugen
-```
+- Werden verwendet um Werte zu erzeugen
+
+Beispiele für GHCI:
+```haskell
 -- generate :: Gen a -> IO a
 
 -- produce 1, 2, or 3
@@ -40,7 +46,7 @@ generate $ return 1
 - Produziert Generators
 - Stellt Standardgeneratoren für basic Typen.
 
-```
+```haskell
 generate (arbitrary :: Gen Bool)
 
 generate (arbitrary :: Gen [(Int, Bool)])
