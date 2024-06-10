@@ -13,7 +13,7 @@
 Projekt bauen:
 ```bash
 stack build
-```p
+```
 
 Programm ausführen:
 ```bash
@@ -21,7 +21,7 @@ stack exec <path to file or exe> # stack exec .\.stack-work\dist\eebe39f7\build\
 ```
 
 Code Coverage (optional):
-```
+```bash
 stack test --coverage
 ```
 
@@ -69,44 +69,39 @@ Hier wird eine Typannotation verwendet, um anzugeben, dass `arbitrary` ein Gener
 
 ### Beispiel: String
 ```haskell
+module StringArbitrary
+    ( stringGen
+    ) where
+
+import Test.QuickCheck
+import Control.Monad (replicateM)
+
 stringGen :: Gen [Char]
 stringGen = do
-  -- Anzahl an Leerzeichen max 10
   numSpaces <- chooseInt (0, 10)
-
-  -- Gesamtlänge max 40 abüglich Leerzeichen
   numLetters <- chooseInt (0, 40 - numSpaces)
 
-  -- Zufällige Kleinbuchstaben anhand von der Anzahl ziehen
   -- replicateM :: Applicative m => Int -> m a -> m [a]
-  -- 
   letters <- replicateM numLetters (elements ['a'..'z'])
-
-  -- Zufällige Kleinbuchstaben anhand von der Anzahl ziehen
   spaces <- replicateM numSpaces (return ' ')
 
   -- Kombiniere und mische Buchstaben und Leerzeichen
-  let combined = letters ++ spaces
-  shuffled <- shuffle combined
+  shuffled <- shuffle (letters ++ spaces)
 
-  return $ fixSpaces shuffled
+  return $ limitConsecutiveSpaces 5 shuffled
 
--- Wendet limitSpaces auf jede Gruppe von Zeichen an
-fixSpaces :: String -> String
-fixSpaces = concatMap limitSpaces . groupBySpaces
+-- Begrenzt aufeinanderfolgende Leerzeichen auf die angegebene Maximalanzahl
+limitConsecutiveSpaces :: Int -> String -> String
+limitConsecutiveSpaces maxSpaces = go 0
+  where
+    go _ [] = []
+    go n (x:xs)
+      | x == ' ' =
+          if n < maxSpaces
+          then x : go (n+1) xs  -- Leerzeichen bleibt bestehen
+          else go n xs          -- Leerzeichen wird entfernt
+      | otherwise = x : go 0 xs -- Reset des Zählers, wenn kein Leerzeichen
 
--- Gruppiere die Zeichen in Listen von aufeinanderfolgenden Leerzeichen oder Buchstaben
-groupBySpaces :: String -> [String]
-groupBySpaces [] = []
-groupBySpaces (x:xs) = (x : takeWhile (== x) xs) : groupBySpaces (dropWhile (== x) xs)
-
--- Begrenze die Anzahl aufeinanderfolgender Leerzeichen auf 5
--- `s@` ist ein Alias, der es ermöglicht, den gesamten String weiterhin als `s` zu verwenden.
--- Wird nur mit String mit gleichen Zeichen aufgerufen. Bsp: "aaa", "      ", usw.
-limitSpaces :: String -> String
-limitSpaces s@(x:_) 
-  | x == ' '  = take 5 s  -- Maximal 5 Leerzeichen
-  | otherwise = s
 ```
 
 ```haskell
