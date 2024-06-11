@@ -1,5 +1,18 @@
 # Seminararbeit-Quickcheck
 
+## Inhalt
+- [Seminararbeit-Quickcheck](#seminararbeit-quickcheck)
+  - [Inhalt](#inhalt)
+  - [Quickcheck](#quickcheck)
+    - [Einführung](#einführung)
+    - [Ausführen:](#ausführen)
+    - [Generators](#generators)
+    - [Arbitrary](#arbitrary)
+    - [Beispiel: String](#beispiel-string)
+    - [Beispiel: MyList](#beispiel-mylist)
+  - [Tests](#tests)
+  - [Funktionale Programmierung in Haskell](#funktionale-programmierung-in-haskell)
+
 ## Quickcheck
 ### Einführung
 - Bibliothek für zufälliges Testen der Programm**eigenschaften**.
@@ -20,7 +33,7 @@ Programm ausführen:
 stack exec <path to file or exe> # stack exec .\.stack-work\dist\eebe39f7\build\seminar-haskell-qc-
 ```
 
-Code Coverage (optional):
+Test ausführen (Code Coverage optional):
 ```bash
 stack test --coverage
 ```
@@ -67,7 +80,7 @@ generate $ MyType <$> arbitrary <*> arbitrary <*> arbitrary
 Hier wird eine Typannotation verwendet, um anzugeben, dass `arbitrary` ein Generator für den Typ `Bool` oder `[(Int, Bool)]` sein soll. Die Typannotation `:: Gen Bool` spezifiziert, dass `arbitrary` als ein `Gen Bool` interpretiert werden soll. Dies ist notwendig, wenn der Compiler den Typ nicht automatisch ableiten kann oder wir den Typ explizit klarstellen wollen.
 
 
-### Beispiel: String
+### Beispiel: [String](./src/StringArbitrary.hs)
 ```haskell
 module StringArbitrary
     ( stringGen
@@ -108,7 +121,7 @@ limitConsecutiveSpaces maxSpaces = go 0
 generate (stringGen :: Gen String)
 ```
 
-### Beispiel: MyList
+### Beispiel: [MyList](./src/MyListArbitrary.hs)
 ```haskell
 data List a = Nil | Cons a (List a) deriving (Eq, Show)
 
@@ -117,13 +130,32 @@ instance Arbitrary a => Arbitrary (List a) where
   arbitrary = oneof [return Nil, Cons <$> arbitrary <*> arbitrary]
 ```
 
+## Tests
+In der `main` der [Testdatei](./test/Spec.hs) wird mit `verboseCheck` oder `quickCheck` die Testproperty mit einem Generator aufgerufen. 
 
-## FP in Haskell
-- Rekursion
-- Pattern Matching
-- 
+In diesem Beispiel wird die Eigenschaft überprüft, dass der String nicht länger als 40 Zeichen ist und wird mit Generierten Strings der 
+```haskell
+main :: IO ()
+main = do
+  verboseCheck prop_lengthCheck
 
-## Typeclasses
-- ähnlich wie Interfaces
+prop_lengthCheck :: SpecialString -> Bool
+prop_lengthCheck (SpecialString str) = length str < 40
+```
 
-konkretes Beispiel
+## Funktionale Programmierung in Haskell
+- Rekursion: die Hilfsfunktion wird rekursiv aufgerufen.
+```haskell
+limitConsecutiveSpaces :: Int -> String -> String
+limitConsecutiveSpaces maxSpaces = go 0
+  where
+    go _ [] = []
+    go n (x:xs)
+      | x == ' ' =
+          if n < maxSpaces
+          then x : go (n+1) xs  -- Leerzeichen bleibt bestehen
+          else go n xs          -- Leerzeichen wird entfernt
+      | otherwise = x : go 0 xs -- Reset des Zählers, wenn kein Leerzeichen
+```
+- Pattern Matching: wird go mit einem beliebigen n und der leeren Liste aufgerufen, greift dieser fall. Wird es mit einer nicht leeren Liste aufgerufen, greift der andere Fall.
+- Guards: Nach der `|` wird eine boolsche Bedingung definiert und für den Fall `true` nach dem `=` definiert was geschehen soll. Alle anderen Fälle werden in `otherwise` gefangen.

@@ -1,9 +1,17 @@
 module StringArbitrary
-    ( stringGen
+    ( SpecialString(..)
+    , stringGen
     ) where
 
 import Test.QuickCheck
 import Control.Monad (replicateM)
+
+-- Neuer Typ für spezielle Strings
+newtype SpecialString = SpecialString { getSpecialString :: String }
+    deriving (Eq, Show)
+
+instance Arbitrary SpecialString where
+    arbitrary = SpecialString <$> stringGen
 
 stringGen :: Gen [Char]
 stringGen = do
