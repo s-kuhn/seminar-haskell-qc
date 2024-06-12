@@ -16,11 +16,11 @@
 ## Quickcheck
 ### Einführung
 - Bibliothek für zufälliges Testen der Programm**eigenschaften**.
-- automatische Testgenerierung
+- automatische Testdatengenerierung
 - Man definiert Eigenschaften, welche die Funktionen erfüllen sollen (Sortierfunktion soll sortierte Liste zurückgeben).
-- Eine Eigenschaft eines ist eine Beobachtung, von der wir erwarten, dass sie egal der Eingabe wahr ist (Die Länge eines Strings bleibt nach Anwendung von `reverse` gleich).
+- Unter einer Eigenschaft versteht man eine Beobachtung, von der erwartet wird, dass sie unabhängig von den Eingabewerten immer zutrifft, wie zum Beispiel, dass die Länge eines Strings nach Anwendung der Funktion `reverse` unverändert bleibt.
 - Bei einem Fehler wird versucht, das Problem einzugrenzen (shrinking).
-- Erste Implementierung von QuickCheck in Haskell und inzwischen in über 30 Sprachen übernommen.
+- Erste Implementierung von QuickCheck in Haskell, inzwischen in über 30 Sprachen übernommen.
 
 ### Ausführen:
 Projekt bauen:
@@ -55,11 +55,11 @@ generate $ choose ('a', 'z')
 -- produce a constant value (since Gen has a Monad instance)
 generate $ return 1
 ```
-Diese Funktion führt den Generator aus und gibt das Ergebnis zurück. Da die Generierung von Zufallswerten Nebenwirkungen hat (weil sie auf einen Zufallszahlengenerator zugreift), ist das Ergebnis in der `IO`-Monade verpackt.
+Diese Funktion führt den Generator aus und gibt das Ergebnis zurück. Da die Generierung von Zufallswerten Nebenwirkungen hat (weil sie auf einen Zufallszahlengenerator zugreift), ist das Ergebnis in der IO-Monade verpackt, wodurch Haskell eine strikte Trennung zwischen reinem und nicht-reinem Code erzwingt.
 
 ### Arbitrary
-- Produziert Generators
-- Stellt Standard-Generatoren für klassischeTypen (https://hackage.haskell.org/package/QuickCheck-2.15/docs/Test-QuickCheck.html#g:5).
+- Produziert Generatoren
+- Stellt Standard-Generatoren für klassische Typen (https://hackage.haskell.org/package/QuickCheck-2.15/docs/Test-QuickCheck.html#g:5).
 
 ```haskell
 generate (arbitrary :: Gen Bool)
@@ -77,7 +77,8 @@ generate $ MyType <$> arbitrary <*> arbitrary <*> arbitrary
 ```
 
 `arbitrary` ist eine Methode der Typklasse `Arbitrary`, die in QuickCheck definiert ist. Sie wird verwendet, um Standard-Generatoren für verschiedene Typen zu definieren. Wenn ein Typ eine Instanz von `Arbitrary` ist, bedeutet dies, dass es eine Definition für `arbitrary` gibt, die einen Generator für diesen Typ zurückgibt.
-Hier wird eine Typannotation verwendet, um anzugeben, dass `arbitrary` ein Generator für den Typ `Bool` oder `[(Int, Bool)]` sein soll. Die Typannotation `:: Gen Bool` spezifiziert, dass `arbitrary` als ein `Gen Bool` interpretiert werden soll. Dies ist notwendig, wenn der Compiler den Typ nicht automatisch ableiten kann oder wir den Typ explizit klarstellen wollen.
+
+Hier wird eine Typannotation verwendet, um anzugeben, dass `arbitrary` ein Generator für den Typ `Bool` oder für `[(Int, Bool)]` ist. Die Typannotation `:: Gen Bool` spezifiziert, dass `arbitrary` als ein `Gen Bool` interpretiert werden soll. Dies ist notwendig, wenn der Compiler den Typ nicht automatisch ableiten kann oder wenn eine explizite Typangabe erforderlich ist.
 
 
 ### Beispiel: [String](./src/StringArbitrary.hs)
@@ -133,7 +134,7 @@ instance Arbitrary a => Arbitrary (List a) where
 ## Tests
 In der `main` der [Testdatei](./test/Spec.hs) wird mit `verboseCheck` oder `quickCheck` die Testproperty mit einem Generator aufgerufen. 
 
-In diesem Beispiel wird die Eigenschaft überprüft, dass der String nicht länger als 40 Zeichen ist und wird mit Generierten Strings der 
+In diesem Beispiel wird die Eigenschaft überprüft, dass der String nicht länger als 40 Zeichen ist, wobei die Überprüfung mit generierten Strings erfolgt.
 ```haskell
 main :: IO ()
 main = do
